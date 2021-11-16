@@ -10,7 +10,8 @@ import docker
 logging.config.fileConfig("logging.conf", disable_existing_loggers=False)
 
 logger = logging.getLogger("myApp")
-log = logger.info
+
+loginf = logger.info
 logdbg = logger.debug
 logwrn = logger.warning
 logerr = logger.error
@@ -31,7 +32,7 @@ class DCli:
 
     def status(self):
         """log connection status"""
-        log(f"Connected: {self.connected}")
+        loginf(f"Connected: {self.connected}")
 
     def connect_to_cli(self, retry_times=3, retry_interval=2):
         """try to connect to docker sock"""
