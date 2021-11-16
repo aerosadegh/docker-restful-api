@@ -7,8 +7,8 @@ from typing import Optional
 import docker
 from fastapi import FastAPI
 
-app = FastAPI()
 
+app = FastAPI()
 
 client = docker.from_env()
 
