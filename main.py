@@ -92,13 +92,25 @@ def ps_item(
     return res
 
 
-@app.get("/image/{item_id}")
-def read_item(item_id: str, query: Optional[str] = None):
-    """read item test"""
-    return {
-        "item_id": item_id,
-        "query": query,
-    }
+@app.get("/image/{image_id}")
+def read_item(image_id: str, query: Optional[str] = None):
+    """return full image info with id"""
+    try:
+        client = DCli()
+        res = {
+            "image": [
+                {"id": image.short_id.split(":")[-1], "tags": image.tags, "attrs": image.attrs}
+                for image in client.images_list()
+                if image.short_id.split(":")[-1] == image_id
+            ]
+        }
+    except Exception as docker_exeption:
+        logerr(f"{docker_exeption}", exc_info=True)
+        raise UnicornException(
+            name="Client can't connect to Docker daemon!",
+            code=500,
+        ) from docker_exeption
+    return res
 
 
 @app.get("/run/{item_name}")
