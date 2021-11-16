@@ -10,7 +10,6 @@ from fastapi.responses import JSONResponse
 
 from utils import DCli
 from utils import logerr
-from utils import loginf
 
 ##########################
 ## create Instance objects
@@ -30,7 +29,6 @@ class UnicornException(Exception):
 @app.exception_handler(UnicornException)
 async def unicorn_exception_handler(request: Request, exc: UnicornException):
     """custom exception handler"""
-    loginf(f"{request}")
     return JSONResponse(
         status_code=exc.code,
         content={"message": f"Oops! {exc.name}"},
@@ -46,6 +44,43 @@ def read_root():
             "images": [
                 {"id": image.short_id.split(":")[-1], "tags": image.tags}
                 for image in client.images_list()
+            ]
+        }
+    except Exception as docker_exeption:
+        logerr(f"{docker_exeption}", exc_info=True)
+        raise UnicornException(
+            name="Client can't connect to Docker daemon!",
+            code=500,
+        ) from docker_exeption
+    return res
+
+
+@app.get("/ps/")
+def ps_item(
+    all: Optional[bool] = False,
+    limit: Optional[int] = -1,
+):
+    """read containers info"""
+    try:
+        client = DCli()
+        res = {
+            "containers": [
+                {
+                    "id": container.short_id.split(":")[-1],
+                    "tags": container.name,
+                    "status": (
+                        f"{container.status}"
+                        if container.status == "running"
+                        else f"{container.status}"
+                        f' ({container.attrs.get("State").get("ExitCode")})'
+                    ),
+                    "image": {
+                        "id": container.image.short_id.split(":")[-1],
+                        "tags": container.image.tags,
+                    },
+                    "ports": container.attrs.get("NetworkSettings").get("Ports"),
+                }
+                for container in client.containers_list(all=all, limit=limit)
             ]
         }
     except Exception as docker_exeption:

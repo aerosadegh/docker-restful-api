@@ -62,6 +62,20 @@ class DCli:
         self.connect_to_cli()
         return self.cli.images.list()
 
+    def containers_list(self, **kwargs):
+        """return containers list
+        kwargs:
+            all=False
+            limit=-1
+            # before=None
+            # filters=None
+            # since=None
+            # sparse=False
+            # ignore_removed=False
+        """
+        self.connect_to_cli()
+        return self.cli.containers.list(**kwargs)
+
 
 if __name__ == "__main__":
     DCli()
