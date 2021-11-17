@@ -1,0 +1,9 @@
+*env*/
+.vscode/
+__pycache__/
+requirements-*
+*.sh
+test*
+README*
+docker-compose.yml
+Dockerfile

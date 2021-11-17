@@ -1,0 +1,11 @@
+version: "3.8"
+
+
+services:
+  api:
+    build: .
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    ports:
+      - "8000:8000"
