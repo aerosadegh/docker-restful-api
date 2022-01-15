@@ -24,7 +24,7 @@ def read_compose(path=PATH, verbose=False):
         break
     else:
         raise FileNotFoundError(f"No any file exist in {path!r} directory!")
-    return conf
+    return conf, file
 
 
 def write_compose(conf, path=PATH, filename="docker-compose.yaml"):

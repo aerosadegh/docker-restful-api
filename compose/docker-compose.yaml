@@ -1,0 +1,12 @@
+networks:
+  testnet:
+    driver: bridge
+services:
+  rds:
+    image: redis:alpine
+    networks:
+    - testnet
+    ports:
+    - 6389:6379
+    restart: always
+version: '3.8'

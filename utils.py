@@ -77,5 +77,35 @@ class DCli:
         return self.cli.containers.list(**kwargs)
 
 
+def get_cli():
+    client = DCli()
+    return client
+
+
+def ps(all=False, limit=-1):
+    client = get_cli()
+
+    res = {
+        "containers": [
+            {
+                "id": container.short_id.split(":")[-1],
+                "tags": container.name,
+                "status": (
+                    f"{container.status}"
+                    if container.status == "running"
+                    else f"{container.status}" f' ({container.attrs.get("State").get("ExitCode")})'
+                ),
+                "image": {
+                    "id": container.image.short_id.split(":")[-1],
+                    "tags": container.image.tags,
+                },
+                "ports": container.attrs.get("NetworkSettings").get("Ports"),
+            }
+            for container in client.containers_list(all=all, limit=limit)
+        ]
+    }
+    return res
+
+
 if __name__ == "__main__":
     DCli()
